@@ -3,6 +3,7 @@ const rateLimit = require("../middlewares/rateLimit.js");
 const asyncErrCatcher = require("../middlewares/asyncErrCatcher.js");
 const userAuth = require("../middlewares/userAuth.js");
 const getChaptGptResponse = require("../utils/openai.js");
+const sanitizeInput = require("../utils/sanitizeText.js");
 require("dotenv").config();
 
 router.post(
@@ -10,8 +11,8 @@ router.post(
   rateLimit,
   asyncErrCatcher(async (req, res, next) => {
     try {
-      const { prompt } = req.body;
-
+      let { prompt } = req.body;
+      prompt = sanitizeInput(prompt);
       if (!prompt) {
         return res.status(400).json({
           error: true,
@@ -35,10 +36,11 @@ router.post(
   "/signed-in",
   userAuth,
   rateLimit,
+
   asyncErrCatcher(async (req, res, next) => {
     try {
-      const { prompt } = req.body;
-
+      let { prompt } = req.body;
+      prompt = sanitizeInput(prompt);
       if (!prompt) {
         return res.status(400).json({
           error: true,
