@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const rateLimit = require("../middlewares/rateLimit.js");
 const asyncErrCatcher = require("../middlewares/asyncErrCatcher.js");
 const userAuth = require("../middlewares/userAuth.js");
 const getChaptGptResponse = require("../utils/openai.js");
@@ -6,6 +7,7 @@ require("dotenv").config();
 
 router.post(
   "/not-signed-in",
+  rateLimit,
   asyncErrCatcher(async (req, res, next) => {
     try {
       const { prompt } = req.body;
@@ -32,6 +34,7 @@ router.post(
 router.post(
   "/signed-in",
   userAuth,
+  rateLimit,
   asyncErrCatcher(async (req, res, next) => {
     try {
       const { prompt } = req.body;
